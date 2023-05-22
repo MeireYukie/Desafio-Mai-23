@@ -39,6 +39,7 @@ public class Cnpjpesquisa {
         String dataAbertura = (String) cnpjMap.get('dataAbertura');
 
         Account newAccount = new Account();
+        newAccount.name = nomeFantasia;
         newAccount.RazaoSocial__c = razaoSocial;
         newAccount.NomeFantasia__c = nomeFantasia;
         newAccount.DatadeAbertura__c = dataAbertura;
