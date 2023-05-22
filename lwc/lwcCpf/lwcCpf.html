@@ -1,0 +1,24 @@
+<template>
+    <lightning-card title="Validação de CPF">
+      <div class="slds-m-around_medium">
+        <lightning-input
+          label="CPF"
+          type="text"
+          maxlength="14"
+          placeholder="000.000.000-00"
+          value={cpf}
+          onchange={handleCpfChange}
+        ></lightning-input>
+        <template if:true={isCpfValid}>
+          <p class="slds-text-color_success">CPF válido!</p>
+        </template>
+        <template if:false={isCpfValid}>
+          <p class="slds-text-color_error">{errorMessage}</p>
+        </template>
+      </div>
+      <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-end">
+        <lightning-button label="Validar CPF" onclick={buttonValidaCpf} variant="brand">          
+        </lightning-button>
+      </div>
+    </lightning-card>
+  </template>

@@ -1,0 +1,23 @@
+<template>
+    <lightning-card title="Lista de Lead fora da Campanha Desafio" class="slds-m-around_large">
+        <div class="slds-grid">
+            <div class="slds-col slds-grow ">
+                <!-- Espaço vazio para preencher o espaço restante -->
+            </div>
+            <div class="slds-col_bump-left slds-p-around_small">
+                <lightning-button label="Abrir Lista" onclick={abrirListaLeads} variant="brand"></lightning-button>
+            </div>
+        </div>
+        
+        <template if:true={mostrarListaLeads}>
+            <lightning-datatable 
+                onrowaction={adicionarLead} 
+                key-field="Id" 
+                data={leads} 
+                columns={columns}
+                hide-checkbox-column>
+            </lightning-datatable>
+        </template>
+   
+    </lightning-card>
+</template>
