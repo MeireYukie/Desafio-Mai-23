@@ -1,0 +1,131 @@
+{
+    "id": 1730,
+    "parent_id": 0,
+    "status": "processing",
+    "currency": "BRL",
+    "version": "7.5.1",
+    "prices_include_tax": false,
+    "date_created": "2023-05-25T18:37:53",
+    "date_modified": "2023-05-25T18:37:53",
+    "discount_total": "0.00",
+    "discount_tax": "0.00",
+    "shipping_total": "0.00",
+    "shipping_tax": "0.00",
+    "cart_tax": "0.00",
+    "total": "17.98",
+    "total_tax": "0.00",
+    "customer_id": 4,
+    "order_key": "wc_order_6yUdWalcFr6Pa",
+    "billing": {
+        "first_name": "Meire",
+        "last_name": "yukie",
+        "company": "",
+        "address_1": "Avenida Aguia de Haia, 2100",
+        "address_2": "ap 74 bloco 7",
+        "city": "Sao Paulo",
+        "state": "SP",
+        "postcode": "03694-900",
+        "country": "BR",
+        "email": "meireyukie17@gmail.com",
+        "phone": "11983302316"
+    },
+    "shipping": {
+        "first_name": "",
+        "last_name": "",
+        "company": "",
+        "address_1": "",
+        "address_2": "",
+        "city": "",
+        "state": "",
+        "postcode": "",
+        "country": "",
+        "phone": ""
+    },
+    "payment_method": "cod",
+    "payment_method_title": "Pagamento na entrega",
+    "transaction_id": "",
+    "customer_ip_address": "45.191.134.101",
+    "customer_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+    "created_via": "checkout",
+    "customer_note": "",
+    "date_completed": null,
+    "date_paid": null,
+    "cart_hash": "7bd807bd8bdafa090899425dba994fbb",
+    "number": "1730",
+    "meta_data": [
+        {
+            "id": 1524,
+            "key": "_orderable_layout_settings",
+            "value": {
+                "categories": [],
+                "layout": null,
+                "images": false,
+                "card_click": null
+            }
+        },
+        {
+            "id": 1559,
+            "key": "is_vat_exempt",
+            "value": "no"
+        },
+        {
+            "id": 1560,
+            "key": "_orderable_service_type",
+            "value": ""
+        }
+    ],
+    "line_items": [
+        {
+            "id": 10,
+            "name": "Beef Burger",
+            "product_id": 940,
+            "variation_id": 0,
+            "quantity": 2,
+            "tax_class": "",
+            "subtotal": "17.98",
+            "subtotal_tax": "0.00",
+            "total": "17.98",
+            "total_tax": "0.00",
+            "taxes": [],
+            "meta_data": [],
+            "sku": "",
+            "price": 8.9900000000000002131628207280300557613372802734375,
+            "image": {
+                "id": "958",
+                "src": "https://loja1.bazargf.com.br/wp-content/uploads/2020/12/product_9.jpg"
+            },
+            "parent_name": null
+        }
+    ],
+    "tax_lines": [],
+    "shipping_lines": [],
+    "fee_lines": [],
+    "coupon_lines": [],
+    "refunds": [],
+    "payment_url": "https://loja1.bazargf.com.br/checkout/order-pay/1730/?pay_for_order=true&key=wc_order_6yUdWalcFr6Pa",
+    "is_editable": false,
+    "needs_payment": false,
+    "needs_processing": true,
+    "date_created_gmt": "2023-05-25T18:37:53",
+    "date_modified_gmt": "2023-05-25T18:37:53",
+    "date_completed_gmt": null,
+    "date_paid_gmt": null,
+    "currency_symbol": "R$",
+    "_links": {
+        "self": [
+            {
+                "href": "https://loja1.bazargf.com.br/wp-json/wc/v3/orders/1730"
+            }
+        ],
+        "collection": [
+            {
+                "href": "https://loja1.bazargf.com.br/wp-json/wc/v3/orders"
+            }
+        ],
+        "customer": [
+            {
+                "href": "https://loja1.bazargf.com.br/wp-json/wc/v3/customers/4"
+            }
+        ]
+    }
+}
