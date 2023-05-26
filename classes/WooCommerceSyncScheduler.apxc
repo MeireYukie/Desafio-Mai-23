@@ -1,0 +1,9 @@
+public class WooCommerceSyncScheduler implements Schedulable {
+    
+    public void execute(SchedulableContext context) {
+        System.debug('Executando WooCommerceSyncScheduler');
+        
+        WooCommerceIntegrationService.syncProductInventory('Numero do pedido');
+        WooCommerceIntegrationService.syncNewCustomers('Numero do pedido');
+    }
+}
