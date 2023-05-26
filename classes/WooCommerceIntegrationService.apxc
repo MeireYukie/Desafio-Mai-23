@@ -55,49 +55,43 @@ public class WooCommerceIntegrationService {
         newContact.LastName = lastName;
         newContact.Email = email;
         
-        insert newContact;
-        
-        System.debug('New contact created: ' + newContact);
-		System.debug(LoggingLevel.ERROR, 'Error message: ' + newContact);
+        try {
+    insert newContact;
+    System.debug('New contact created: ' + newContact);
+} catch (Exception e) {
+    System.debug('Error creating contact: ' + e.getMessage());
+}
     }
-   
-    @AuraEnabled
+    
+  @AuraEnabled
 	public static void syncProductInventory(String orders) {
-        Map<String, Object> ordersMap = getOrdersInfo(orders);
-		System.debug('Product Info: ' + ordersMap);
-        
-        if (ordersMap != null && ordersMap.containsKey('orders')) {
-            List<Object> ordersList = (List<Object>) ordersMap.get('orders');
+    Map<String, Object> ordersMap = getOrdersInfo(orders);
+    System.debug('Product Info: ' + ordersMap);
 
-            for (Object orderObj : ordersList) {
-                Map<String, Object> orderMap = (Map<String, Object>) orderObj;
+    if (ordersMap != null && ordersMap.containsKey('line_items')) {
+        List<Object> lineItems = (List<Object>) ordersMap.get('line_items');
 
-                if (orderMap.containsKey('line_items')) {
-                    List<Object> lineItems = (List<Object>) orderMap.get('line_items');
+        for (Object lineItemObj : lineItems) {
+            Map<String, Object> lineItem = (Map<String, Object>) lineItemObj;
 
-                    for (Object lineItemObj : lineItems) {
-                        Map<String, Object> lineItem = (Map<String, Object>) lineItemObj;
+            if (lineItem.containsKey('name') && lineItem.containsKey('quantity')) {
+                String productName = (String) lineItem.get('name');
+                String quantity = (String) lineItem.get('quantity');
 
-                        if (lineItem.containsKey('name') && lineItem.containsKey('quantity')) {
-                            String product = (String) lineItem.get('name');
-                            String quantity = (String) lineItem.get('quantity');
-
-                            // Atualiza o objeto Product_Inventory__c com a nova quantidade
-                            atualizarEstoqueProduto(product, quantity);
-                            System.debug('Atualizando estoque do produto: ' + product + ', Quantidade: ' + quantity);
-                        }
-                    }
-                }
+                // Atualiza o objeto Product_Inventory__c com a nova quantidade
+                atualizarEstoqueProduto(productName, quantity);
+                System.debug('Atualizando estoque do produto: ' + productName + ', Quantidade: ' + quantity);
             }
         }
     }
+}
 
     // Método auxiliar para atualizar o objeto Product_Inventory__c com a nova quantidade
-private static void atualizarEstoqueProduto(String product, String quantity) {
+    private static void atualizarEstoqueProduto(String productName, String quantity) {
     List<Product_Inventory__c> listaEstoqueProdutos = [
-        SELECT Id, Quantity__c
+        SELECT Id, Quantity__c, Product__c
         FROM Product_Inventory__c
-        WHERE Product__c IN (SELECT Id FROM Product2 WHERE Name = :product)
+        WHERE Product__r.Name = :productName
         LIMIT 1
     ];
 
@@ -106,7 +100,7 @@ private static void atualizarEstoqueProduto(String product, String quantity) {
         estoqueProduto.Quantity__c = String.valueOf(quantity);
 
         update estoqueProduto;
-        
+
         System.debug('Estoque do produto atualizado: ' + estoqueProduto);
         }
     }
