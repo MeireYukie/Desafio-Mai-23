@@ -1,0 +1,117 @@
+public class WooCommerceIntegrationService {
+    
+    @AuraEnabled(cacheable=true)
+    public static Map<String, Object> getOrdersInfo(String orders) {
+        String url = 'https://loja1.bazargf.com.br/wp-json/wc/v3/orders/' + orders;
+        String consumerKey = 'ck_992456567a4938492fc0844d3e744eeac0568551';
+        String consumerSecret = 'cs_d28fc781acbddaba9c80c0fe438e4d884e66e922';
+
+        HttpRequest req = new HttpRequest();
+        req.setEndpoint(url);
+        req.setMethod('GET');
+
+        // Add authentication
+        String authHeader = 'Basic Y2tfOTkyNDU2NTY3YTQ5Mzg0OTJmYzA4NDRkM2U3NDRlZWFjMDU2ODU1MTpjc19kMjhmYzc4MWFjYmRkYWJhOWM4MGMwZmU0MzhlNGQ4ODRlNjZlOTIy';
+        req.setHeader('Authorization', authHeader);
+
+        Http http = new Http();
+        HttpResponse res = http.send(req);
+
+        Map<String, Object> ordersInfo = new Map<String, Object>();
+
+        if (res.getStatusCode() == 200) {
+            Map<String, Object> responseMap = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
+
+            Map<String, Object> billingMap = (Map<String, Object>) responseMap.get('billing');
+            String firstName = (String) billingMap.get('first_name');
+            String lastName = (String) billingMap.get('last_name');
+            String email = (String) billingMap.get('email');
+           
+            System.debug('Response Map: ' + responseMap);
+            System.debug('Billing Map: ' + billingMap);
+
+            ordersInfo.put('first_name', firstName);
+            ordersInfo.put('last_name', lastName);
+            ordersInfo.put('email', email);
+        } else {
+            System.debug('HTTP Response Code: ' + res.getStatusCode());
+            System.debug('HTTP Response Body: ' + res.getBody());
+        }
+
+        return ordersInfo;
+    }
+
+    @InvocableMethod(label='Sync Orders' description='Syncs new customers and product inventory')
+    public static void syncOrders(List<SyncOrdersInput> inputList) {
+        for (SyncOrdersInput input : inputList) {
+            String orders = input.orders;
+            
+            Map<String, Object> ordersMap = getOrdersInfo(orders);
+
+            String firstName = (String) ordersMap.get('first_name');
+            String lastName = (String) ordersMap.get('last_name');
+            String email = (String) ordersMap.get('email');
+            
+            System.debug('Customer Info - Name: ' + firstName + ' ' + lastName + ', Email: ' + email);
+            
+            Contact newContact = new Contact();
+            newContact.FirstName = firstName;
+            newContact.LastName = lastName;
+            newContact.Email = email;
+            
+            insert newContact;
+            
+            System.debug('New contact created: ' + newContact);
+            System.debug(LoggingLevel.ERROR, 'Error message: ' + newContact);
+            
+            if (ordersMap != null && ordersMap.containsKey('orders')) {
+                List<Object> ordersList = (List<Object>) ordersMap.get('orders');
+
+                for (Object orderObj : ordersList) {
+                    Map<String, Object> orderMap = (Map<String, Object>) orderObj;
+
+                    if (orderMap.containsKey('line_items')) {
+                        List<Object> lineItems = (List<Object>) orderMap.get('line_items');
+
+                        for (Object lineItemObj : lineItems) {
+                            Map<String, Object> lineItem = (Map<String, Object>) lineItemObj;
+
+                            if (lineItem.containsKey('name') && lineItem.containsKey('quantity')) {
+                                String product = (String) lineItem.get('name');
+                                String quantity = (String) lineItem.get('quantity');
+
+                                // Atualiza o objeto Product_Inventory__c com a nova quantidade
+                                atualizarEstoqueProduto(product, quantity);
+                                System.debug('Atualizando estoque do produto: ' + product + ', Quantidade: ' + quantity);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Método auxiliar para atualizar o objeto Product_Inventory__c com a nova quantidade
+    private static void atualizarEstoqueProduto(String product, String quantity) {
+        List<Product_Inventory__c> listaEstoqueProdutos = [
+            SELECT Id, Quantity__c
+            FROM Product_Inventory__c
+            WHERE Product__c IN (SELECT Id FROM Product2 WHERE Name = :product)
+            LIMIT 1
+        ];
+
+        if (!listaEstoqueProdutos.isEmpty()) {
+            Product_Inventory__c estoqueProduto = listaEstoqueProdutos[0];
+            estoqueProduto.Quantity__c = String.valueOf(quantity);
+
+            update estoqueProduto;
+            
+            System.debug('Estoque do produto atualizado: ' + estoqueProduto);
+        }
+    }
+    
+    public class SyncOrdersInput {
+        @InvocableVariable(label='Orders' required=true)
+        public String orders;
+    }
+}
